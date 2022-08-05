@@ -1,0 +1,27 @@
+Starting up MAKE_SE v.0.20 
+
+
+-----------------------------------------------------
+     Input file name: /Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/sblist.txt
+     Output file root: /Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/event
+-----------------------------------------------------
+
+FS37_127f85c0-127f91a4.gz     3.103472280000000E+08   GoodXenon1_2s 
+FS3b_127f85c0-127f91a4.gz     3.103472280000000E+08   GoodXenon2_2s 
+
+There are 2 files in total.
+  GoodXenon1   :  1  
+  GoodXenon2   :  1  
+  Transparent1 :  0   
+  Transparent2 :  0   
+  Transparent3 :  0   
+
+
+Calling XENON2FITS (1) with 
+/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/pca/FS37_127f85c0-127f91a4.gz 
+/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/pca/FS3b_127f85c0-127f91a4.gz 
+/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/event_gx0
+
+xenon2fits xenon1="/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/pca/FS37_127f85c0-127f91a4.gz" xenon2="/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/pca/FS3b_127f85c0-127f91a4.gz" outfile="/Users/rohanpunamiya/Desktop/Data/P80018/80018-02-02-01/event_gx0" wrtparm=x clobber=Yes mode=h
+
+MAKE_SE successfully completed.
