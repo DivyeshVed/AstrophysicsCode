@@ -11,7 +11,7 @@ import pandas as pd
 # Reading the excel sheet and importing it into a pandas table.
 df = pd.read_excel('/Users/rohanpunamiya/Desktop/AstrophysicsCode/DownloadedOBSIDS.xls')
 # Renaming the column headers in the dataframe
-df.columns = ['prnb', 'OBSID', 'Ran extract.py', 'Ran analyse.py', 'Ran qpo_fit_code.py']
+df.columns = ['prnb', 'OBSID', 'Ran extract.py', 'Ran analyse.py', 'Ran qpo_fit_code.py', '0.5 lor model', '1 lor model' , '1.5 lor model', '2 lor model', '3 lor model', '4 lor model', 'Best Fit Model (RCS)']
 # Iterating through the rows in the dataframe
 for index, row in df.iterrows():
     # Getting the prnb number, so we can access that folder in the Data folder on the desktop
