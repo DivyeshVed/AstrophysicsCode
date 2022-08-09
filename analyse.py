@@ -1,3 +1,9 @@
+# This code is the second one to the run in the pipeline. 
+# This code is used to extract the powerspectrum using the lightcurve data that was extracted in the previous step of the pipeline. 
+# Once again, you can run this code using the simple command on your terminal window: python3 anaylse.py
+# Before running this code, always remember to initialize HEASoft using the following command in your terminal: heainit
+# You must manually change the prnb and the obsid folder path on line 24. 
+
 import numpy #Libray that is used for wokring with array
 import scipy #Library used for scientific and technical computing
 import time #A way of representing time in code

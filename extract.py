@@ -1,3 +1,9 @@
+# This is the first code that is to be run in the pipeline. 
+# This code extracts the light curve data from the data that was downloaded from the NASA archives.
+# Remember to initialize HEASoft before running this code using the following command in yout terminal: heainit
+# To run this code, use the following command: python3 extract.py 
+# You need to change the prnb folder and the obsid that you want to run the code on manually on line 22 of the code.
+
 import numpy
 import scipy
 import time
@@ -10,7 +16,6 @@ import pandas as pd
 import pickle
 from os.path import exists
 
-####Code to extract lightcurves from all the observations in a given PropID####
 # Returns the time taken to run the code. 
 start_time = time.time()
 # The propid refers to the proppsal ID that we want to run the code on. In this line, using the asterisk is using the widlcard, thus you can calling this code
@@ -18,7 +23,7 @@ start_time = time.time()
 propid = 'P10065/10065-02-01-00'
 #propid = sys.argv[1]
 #propid ='GX339-4/P70110/7*'
-# The path refers to the place where you can find the proposal ID folder. THis path is attached to the propsal ID folder name, with it being at the end. 
+# The path refers to the place where you can find the proposal ID folder. This path is attached to the propsal ID folder name, with it being at the end. 
 path = '/Users/rohanpunamiya/Desktop/Data/%s'%propid
 # This refers to the file name that we are going to create in each of the proposal ID folders, as we are given the path above. 
 files = '%s/datamode.txt'%path
