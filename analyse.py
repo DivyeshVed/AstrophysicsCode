@@ -21,7 +21,7 @@ from os.path import exists
 #seglength = int(sys.argv[2])
 seglength = 2048
 #propid ='1915+105/P20186/20186-03-02-052'
-propid = 'P10065/10065-02-01-00'
+propid = 'P70014/70014-02-02-00'
 path = '/Users/rohanpunamiya/Desktop/Data/%s' %propid
 zero_time = time.time()
 

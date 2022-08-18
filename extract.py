@@ -20,7 +20,7 @@ from os.path import exists
 start_time = time.time()
 # The propid refers to the proppsal ID that we want to run the code on. In this line, using the asterisk is using the widlcard, thus you can calling this code
 # on all the lines in the folder with the name of the proposal ID. 
-propid = 'P10065/10065-02-01-00'
+propid = 'P70014/70014-02-02-01'
 #propid = sys.argv[1]
 #propid ='GX339-4/P70110/7*'
 # The path refers to the place where you can find the proposal ID folder. This path is attached to the propsal ID folder name, with it being at the end. 

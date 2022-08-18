@@ -4,9 +4,11 @@ import sys
 import numpy
 import time
 import pickle
-import tkinter
+import tkinter as tk
 import subprocess
 import time
+from os.path import exists
+
 
 # Loading the pkl file.
 data = pickle.load(open("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl","rb"))
@@ -39,9 +41,17 @@ i = 0
 # Iterating through the listOfObsids
 for obsid in listOfObsids:
     print("The obsid seen is: ", obsid)
-    # Opening the qpo_fit folder in the obsid folder
-    qpoFitFolderPath = os.path.join(prnb,obsid,"qpo_fit")
-    # Change the wokring directory to the qpo_fit folder in the obsid folder
+    # Opening the bosid folder
+    os.chdir(os.path.join(prnb,obsid))
+    # Checking for the qpo_fit folder
+    qpo_fit__exists = exists('qpo_fit')
+	# If qpo_fit folder exists, then make the path that goes into the qpo_fit folder, otherwise continue the iteration
+    if qpo_fit__exists == True:
+        qpoFitFolderPath = os.path.join(prnb,obsid,"qpo_fit")
+    else:
+        print("There is no qpo_fit folder in this obsid.")
+        continue
+    # Change the working directory to the qpo_fit folder in the obsid folder using the path created above
     os.chdir(qpoFitFolderPath)
     # Iterating through every file in the qpoFitFolderPath and looking for the file with the eps extension.
     for file in os.listdir(qpoFitFolderPath):
@@ -73,7 +83,7 @@ for obsid in listOfObsids:
 	            # Replacing the qpo_fit_code.py column to yes at the particular row index
                 data.loc[idx,modelNumber + ' lor model'] = red_chi_sq
     # Create a tkinter root window
-    root = tkinter.Tk()
+    root = tk.Tk()
     # Root window title and dimension
     root.title("When you press a button the message will pop up")
     root.geometry('200x100')
@@ -83,7 +93,7 @@ for obsid in listOfObsids:
         subprocess.call(['osascript', '-e', 'tell application "Preview" to quit'])
         time.sleep(3)
     # Create a Button
-    button = Button(root, text="Next obsid", command=onClick, height=2, width=10)
+    button = tk.Button(root, text="Next obsid", command=onClick, height=2, width=10)
     # Set the position of button on the top of window.
     button.pack(side='bottom')
     root.mainloop()

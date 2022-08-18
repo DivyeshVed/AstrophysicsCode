@@ -2,12 +2,19 @@ import numpy
 import re
 import glob
 from powerspec import *
+import sys
+import os
 
 #### MAKE SURE TO RUN qpo_fit_code.py BEFORE RUNNING THIS CODE, OTHERWISE THERE WON'T BE ANY LOG FILES FOR THIS CODE TO READ!
 # Getting the path of the data
 path = '/Users/rohanpunamiya/Desktop/Data'
+# Taking the input from the user. THis input is the prnb folder name. 
+input = sys.argv[1]
+# Getting the second input from the user which is the obsid folder name
+input2 = sys.argv[2]
 # Getting the obsid and attaching it to the path
-obsid = '%s/P10067/10067-01-01-00'%path
+obsid = os.path.join(path,input,input2)
+print("This is the obsid path: ", obsid)
 # Getting the file name that we want to work with
 f = '512lc'
 seglength = 1024
@@ -19,7 +26,6 @@ seglength = 1024
 models = ['0.5lor','1lor','1.5lor','2lor', '3lor', '4lor']
 # Making a dictionary with the names of the models and the indices that you want to store them in in the dictionary. The value on the left of the colon is the key, and the one to the right is the value.
 num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7}
-#models = ['4lor']
 
 # Iterating through the empty list of pathnames that are similar to the obsid
 for p in glob.glob(obsid):
@@ -35,6 +41,7 @@ for p in glob.glob(obsid):
 	freq1, pow1, err1 = numpy.genfromtxt('%s'%ps_file,delimiter='\t', unpack=True)
 	# Finding the initial frequency by subtracting the first value in the array from the second value. 
 	freq_int = freq1[1] - freq1[0]
+	print("This is the initial frequency:",freq_int)
 	# Iterating through the list of models
 	for m in models:
 		# Opening the log files with the name as the models. 
@@ -59,10 +66,10 @@ for p in glob.glob(obsid):
 	model_sorted = dict(sorted(model_dict.items(), key=lambda item: item[1]))
 	# Find best fit model
 	# Creating a variable to keep count. 
-	i=1
+	i = 1
 	# This is assigning the current best model to the first value form the sorted dictionary. 
 	current_best_val = list(model_sorted.values())[0]
-	# Finding the difference between the current best and the ideal we want whihc is a value of 1. 
+	# Finding the difference between the current best and the ideal we want which is a value of 1. 
 	difference = abs(1 - current_best_val)
 	# Finding the model name of the current best fit. 
 	best_fit_mod = list(model_sorted.keys())[0]
@@ -93,32 +100,42 @@ for p in glob.glob(obsid):
 	# Read the log file of the best fit model and extract fit params
 	# Opening the log file of the best fit model. 
 	with open('%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, best_fit_mod), 'r') as file:
+		print("The following log file is open:",file)
 		# Reading through all the lines in the file. 
 		lines = file.readlines()
 		# Creating an empty array to hold the start or inital values that we give xpsec to fit the model.
-		fit_start =[]
+		fit_start_lines =[]
 		# Finding the parameters that are used by xspec to fit the model.
 		params = []
 		# Finding the errors associated with each of the parameters. 
 		errors =[]
 		# This keep track of the number of iterations, thus telling us the number of lines. It basically counts the number of iterations. 
 		for i, line in enumerate(lines):
-			# Finding the line where the data with the best fit starts. We are looking for the second set
-			# The first set is the initialization of the model.
+			print("This is the value os i: ",i)
+			# Finding the line where the data with the best fit starts.
 			if "#   1    1   powerlaw   PhoIndex" in line:
-				# Adding these values to the array called fit_start
-				fit_start.append(i)
+				# Adding these values to the array called fit_start. fit_start holds the line numbers where the fitting parameters begin.
+				fit_start_lines.append(i)
+			print("The fitting parameters begin at these line numbers in the log file:",fit_start_lines)
 
-		start_best_fit_param = fit_start[-1]
-		print(start_best_fit_param)
+		# Finding the line that the best fit parameters begin at in the log file.
+		start_best_fit_param_lines = fit_start_lines[-1]
+		print("This is the line that the best fit parameters being at: ",start_best_fit_param_lines)
 
+		# num_lor refers to the key value of the best fit model in the dictionary that is made on line 28
 		num_lor = num_lor_dict[best_fit_mod]
+		# num_param refers to the total number of parameters that are outputed in the fitting. It multiplies it by 3 as there are three parameters used to design each lorentzian.
 		num_param = num_lor * 3
-		print(num_lor, num_param)
+		# Printing the best fit model and the number of parameters needed to fit the model
+		print("This is the key of the lorenztian model that is of best fit:", num_lor)
+		print("This is the number of parameters that are used to fit the best fit lorentzian model:",num_param)
 
-		end_best_fit_param = start_best_fit_param + num_param + 1
+		# Finding the last line of the best fit parameters
+		end_best_fit_param_line = start_best_fit_param_lines + num_param
+		print("This is the last line number of the best fit parameters:",end_best_fit_param_line)
 
-		for i in range(start_best_fit_param, end_best_fit_param+1):
+		for i in range(start_best_fit_param_lines, end_best_fit_param_line):
+			print("This is the value of i: ",i)
 			params.append(lines[i].split()[-3])
 			errors.append(lines[i].split()[-1])
 			#print(lines[i].split()[-1])
