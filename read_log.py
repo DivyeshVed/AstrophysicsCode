@@ -34,14 +34,14 @@ for p in glob.glob(obsid):
 	# Creating an empty dictionary. 
 	model_dict ={}
 
-	# Creating a power spectrum file in the same qpo_fit folder. 
+	# Creating a file that contains the power spectrum values normalized by fractional rms. 
 	ps_file = '%s/%s_fracrms_ps_%i.txt'%(qpo_fit_path,f,seglength)
 
 	# Finding values for the frequency, power and error using a numpy command. Learn more about this command. This command is used to load data from a text file into numpy.
 	freq1, pow1, err1 = numpy.genfromtxt('%s'%ps_file,delimiter='\t', unpack=True)
-	# Finding the initial frequency by subtracting the first value in the array from the second value. 
+	# Finding the frequency interval by subtracting the first value in the array from the second value. 
 	freq_int = freq1[1] - freq1[0]
-	print("This is the initial frequency:",freq_int)
+	print("This is the frequency interval:",freq_int)
 	# Iterating through the list of models
 	for m in models:
 		# Opening the log files with the name as the models. 
@@ -94,7 +94,7 @@ for p in glob.glob(obsid):
 		# Incrementing the iterating variable. 
 		i+=1
 	# Printing a statement that tells you the best fit model and the reduced chi squared value of the model. 
-	print('Best fit mode is',best_fit_mod, ' with reduced chi squared of', best_chi )
+	print('Best fit model is',best_fit_mod, ' with reduced chi squared of', best_chi )
 
 	# I THINK THIS IS THE MAIN PURPOSE OF THIS CODE. 
 	# Read the log file of the best fit model and extract fit params
@@ -105,13 +105,13 @@ for p in glob.glob(obsid):
 		lines = file.readlines()
 		# Creating an empty array to hold the start or inital values that we give xpsec to fit the model.
 		fit_start_lines =[]
-		# Finding the parameters that are used by xspec to fit the model.
+		# Initializing the list to store the parameters
 		params = []
-		# Finding the errors associated with each of the parameters. 
+		# Initlizing the list to the store the errors. 
 		errors =[]
 		# This keep track of the number of iterations, thus telling us the number of lines. It basically counts the number of iterations. 
 		for i, line in enumerate(lines):
-			print("This is the value os i: ",i)
+			print("This is the value is i: ",i)
 			# Finding the line where the data with the best fit starts.
 			if "#   1    1   powerlaw   PhoIndex" in line:
 				# Adding these values to the array called fit_start. fit_start holds the line numbers where the fitting parameters begin.
@@ -125,7 +125,7 @@ for p in glob.glob(obsid):
 		# num_lor refers to the key value of the best fit model in the dictionary that is made on line 28
 		num_lor = num_lor_dict[best_fit_mod]
 		# num_param refers to the total number of parameters that are outputed in the fitting. It multiplies it by 3 as there are three parameters used to design each lorentzian.
-		num_param = num_lor * 3
+		num_param = (int(best_fit_mod[0])+1) * 3
 		# Printing the best fit model and the number of parameters needed to fit the model
 		print("This is the key of the lorenztian model that is of best fit:", num_lor)
 		print("This is the number of parameters that are used to fit the best fit lorentzian model:",num_param)
@@ -139,6 +139,9 @@ for p in glob.glob(obsid):
 			params.append(lines[i].split()[-3])
 			errors.append(lines[i].split()[-1])
 			#print(lines[i].split()[-1])
+
+	print("These are the fitting parameters: ")
+	print(params)
 
 	#### Look for QPOs
 	qpo = []

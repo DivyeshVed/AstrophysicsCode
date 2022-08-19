@@ -87,6 +87,7 @@ for obsid in listOfObsids:
     # Root window title and dimension
     root.title("When you press a button the message will pop up")
     root.geometry('200x100')
+    root.eval('tk::PlaceWindow . center')
     # Create a messagebox showinfo
     def onClick():
         root.destroy()
