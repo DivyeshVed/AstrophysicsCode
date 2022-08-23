@@ -125,12 +125,13 @@ for p in glob.glob(obsid):
 		# num_lor refers to the key value of the best fit model in the dictionary that is made on line 28
 		num_lor = num_lor_dict[best_fit_mod]
 		# num_param refers to the total number of parameters that are outputed in the fitting. It multiplies it by 3 as there are three parameters used to design each lorentzian.
-		num_param = (int(best_fit_mod[0])+1) * 3
+		# Additional 2 added at the end from the power law
+		num_param = ((int(best_fit_mod[0])+1) * 3) + 2
 		# Printing the best fit model and the number of parameters needed to fit the model
 		print("This is the key of the lorenztian model that is of best fit:", num_lor)
 		print("This is the number of parameters that are used to fit the best fit lorentzian model:",num_param)
 
-		# Finding the last line of the best fit parameters
+		# Finding the last line of the best fit parameters.
 		end_best_fit_param_line = start_best_fit_param_lines + num_param
 		print("This is the last line number of the best fit parameters:",end_best_fit_param_line)
 
@@ -142,13 +143,16 @@ for p in glob.glob(obsid):
 
 	print("These are the fitting parameters: ")
 	print(params)
+	print("These are the errors:")
+	print(errors)
 
 	#### Look for QPOs
 	qpo = []
 	qpo_err = []
 	for i in range(len(params)):
 		#print(i+1, params[i])
-		if (i+1) % 3 == 0 and i>=7: #ignoring first 2 params as they fit powerlaw
+		print(i)
+		if (i+1) % 3 == 0 and i>=4: #ignoring first 2 params as they fit powerlaw and the next 3 as they fit the lor for bbn. 
 			Q = float(params[i])/float(params[i+1])
 			print("Q: ", Q) ##test delete later
 			if Q >= 2.0: #only look for peaked components
@@ -174,7 +178,7 @@ for p in glob.glob(obsid):
 					numpy.round(area, 2), numpy.round(area_err, 2), numpy.round(signf, 3), numpy.round(best_chi, 2)))
 		numpy.savetxt('%s/qpo_%i.txt'%(qpo_fit_path,i),data,delimiter='\t',newline='\n',header='FREQ,FREQ_ERR,Q,RMS,RMS_ERR,SIG,RED_CHI_SQ')
 		##create file to save best fit model. You can then open this file and obtain data when logging QPO (in log QPO code)
-		erin_add = open("%s/best_model.txt"%qpo_fit_path, "w")
-		erin_add.write(best_fit_mod)
-		erin_add.close()
-		print("wrote to model file to save best fit model")
+		fileCreated = open("%s/best_model.txt"%qpo_fit_path, "w")
+		fileCreated.write(best_fit_mod)
+		fileCreated.close()
+		print("You can find the best model in the best_model.txt file")
