@@ -6,15 +6,15 @@ import sys
 import os
 
 #### MAKE SURE TO RUN qpo_fit_code.py BEFORE RUNNING THIS CODE, OTHERWISE THERE WON'T BE ANY LOG FILES FOR THIS CODE TO READ!
+# Taking input from the user. This input is the prnb folder name. 
+prnb = sys.argv[1]
 # Getting the path of the data
-path = '/Users/rohanpunamiya/Desktop/Data'
-# Taking the input from the user. THis input is the prnb folder name. 
-input = sys.argv[1]
-# Getting the second input from the user which is the obsid folder name
-input2 = sys.argv[2]
+obsid = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s/*' %prnb
+# # Getting the second input from the user which is the obsid folder name
+# input2 = sys.argv[2]
 # Getting the obsid and attaching it to the path
-obsid = os.path.join(path,input,input2)
-print("This is the obsid path: ", obsid)
+# obsid = os.path.join(path,input,input2)
+# print("This is the obsid path: ", obsid)
 # Getting the file name that we want to work with
 f = '512lc'
 seglength = 1024
@@ -179,6 +179,6 @@ for p in glob.glob(obsid):
 		numpy.savetxt('%s/qpo_%i.txt'%(qpo_fit_path,i),data,delimiter='\t',newline='\n',header='FREQ,FREQ_ERR,Q,RMS,RMS_ERR,SIG,RED_CHI_SQ')
 		##create file to save best fit model. You can then open this file and obtain data when logging QPO (in log QPO code)
 		fileCreated = open("%s/best_model.txt"%qpo_fit_path, "w")
-		fileCreated.write(best_fit_mod)
+		fileCreated.write("The best fit model is: " + best_fit_mod)
 		fileCreated.close()
 		print("You can find the best model in the best_model.txt file")
