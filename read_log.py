@@ -31,6 +31,13 @@ num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7
 for p in glob.glob(obsid):
 	# Finding the path that has the qpo_fit folder and finding the ind_obs file in that folder. There is no ind_obs, thus not really sure how this line is going to work. 
 	qpo_fit_path = '%s/qpo_fit'%p
+	count = 0
+	for path in os.listdir(qpo_fit_path):
+		count += 1
+	print('File count:', count)
+	if count < 30:
+		print("This obsid does not have the eps files in its qpo_fit folder. Ignore this obsid")
+		continue
 	# Creating an empty dictionary. 
 	model_dict ={}
 
@@ -161,11 +168,6 @@ for p in glob.glob(obsid):
 					print('Q value is', Q)
 					qpo.append([ float(params[i]) , float(params[i+1]) , float(params[i+2]) ])
 					qpo_err.append([ float(errors[i]) , float(errors[i+1]) , float(errors[i+2]) ])
-
-	print("QPO:", qpo) ##test delete later
-	print(qpo[0])
-	print(qpo_err[0])
-
 
 	#### Calculate rms and significance of QPO
 	for i in range(len(qpo)):
