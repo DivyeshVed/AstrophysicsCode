@@ -29,17 +29,24 @@ num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7
 
 # Iterating through the empty list of pathnames that are similar to the obsid
 for p in glob.glob(obsid):
+	print("This is the obsid: " + p)
 	# Finding the path that has the qpo_fit folder and finding the ind_obs file in that folder. There is no ind_obs, thus not really sure how this line is going to work. 
 	qpo_fit_path = '%s/qpo_fit'%p
 	count = 0
-	for path in os.listdir(qpo_fit_path):
-		count += 1
-	print('File count:', count)
-	if count < 30:
-		print("This obsid does not have the eps files in its qpo_fit folder. Ignore this obsid")
+	# Checking for the qpo_fit folder in the obsid folder
+	qpo_fit_exists = os.path.exists(qpo_fit_path)
+	if qpo_fit_exists:
+		for path in os.listdir(qpo_fit_path):
+			count += 1
+		print('File count:', count)
+		if count < 20:
+			print("This obsid does not have the eps files in its qpo_fit folder. Ignore this obsid")
+			continue
+		# Creating an empty dictionary. 
+		model_dict ={}
+	else:
+		print("The qpo_fit folder does not exist")
 		continue
-	# Creating an empty dictionary. 
-	model_dict ={}
 
 	# Creating a file that contains the power spectrum values normalized by fractional rms. 
 	ps_file = '%s/%s_fracrms_ps_%i.txt'%(qpo_fit_path,f,seglength)
@@ -48,27 +55,32 @@ for p in glob.glob(obsid):
 	freq1, pow1, err1 = numpy.genfromtxt('%s'%ps_file,delimiter='\t', unpack=True)
 	# Finding the frequency interval by subtracting the first value in the array from the second value. 
 	freq_int = freq1[1] - freq1[0]
-	print("This is the frequency interval:",freq_int)
+	# print("This is the frequency interval:",freq_int)
 	# Iterating through the list of models
 	for m in models:
-		# Opening the log files with the name as the models. 
-		with open('%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, m), 'r') as file:
-			# Reading the lines in the log file. 
-			lines = file.readlines()
+		logFilePath = '%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, m)
+		if os.path.exists(logFilePath):
+			# Opening the log files with the name as the models. 
+			with open(logFilePath, 'r') as file:
+				# Reading the lines in the log file. 
+				lines = file.readlines()
 
-			# Calculate reduced chi squared
-			x = [lines for lines in lines if "Null hypothesis" in lines]
-			dof = (float(x[-1].split(" ")[7]))
+				# Calculate reduced chi squared
+				x = [lines for lines in lines if "Null hypothesis" in lines]
+				dof = (float(x[-1].split(" ")[7]))
 
-			y = [lines for lines in lines if "Test statistic" in lines]
-			chi_sq = (float(y[-1].split(" ")[-8]))
+				y = [lines for lines in lines if "Test statistic" in lines]
+				chi_sq = (float(y[-1].split(" ")[-8]))
 
-			red_chi_sq = numpy.round(chi_sq/dof , 2)
-			# This is adding the reduced chi squared value to the dictionary made above called model_dict. 
-			model_dict[m] = red_chi_sq
-			print('Reduced Chi Squared for %s model is'%m, red_chi_sq)
+				red_chi_sq = numpy.round(chi_sq/dof , 2)
+				# This is adding the reduced chi squared value to the dictionary made above called model_dict. 
+				model_dict[m] = red_chi_sq
+				# print('Reduced Chi Squared for %s model is'%m, red_chi_sq)
+		else:
+			print("The file does not exist")
+			continue
 	# Printing the entire dictionary that contains all the key pair values for each model and their reduced chi squared value. 
-	print(model_dict)
+	# print(model_dict)
 	# Sort model dictionary by ascending order of reduced chi squared
 	model_sorted = dict(sorted(model_dict.items(), key=lambda item: item[1]))
 	# Find best fit model
@@ -106,28 +118,31 @@ for p in glob.glob(obsid):
 	# I THINK THIS IS THE MAIN PURPOSE OF THIS CODE. 
 	# Read the log file of the best fit model and extract fit params
 	# Opening the log file of the best fit model. 
-	with open('%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, best_fit_mod), 'r') as file:
-		print("The following log file is open:",file)
-		# Reading through all the lines in the file. 
-		lines = file.readlines()
-		# Creating an empty array to hold the start or inital values that we give xpsec to fit the model.
-		fit_start_lines =[]
-		# Initializing the list to store the parameters
-		params = []
-		# Initlizing the list to the store the errors. 
-		errors =[]
-		# This keep track of the number of iterations, thus telling us the number of lines. It basically counts the number of iterations. 
-		for i, line in enumerate(lines):
-			print("This is the value is i: ",i)
-			# Finding the line where the data with the best fit starts.
-			if "#   1    1   powerlaw   PhoIndex" in line:
-				# Adding these values to the array called fit_start. fit_start holds the line numbers where the fitting parameters begin.
-				fit_start_lines.append(i)
-			print("The fitting parameters begin at these line numbers in the log file:",fit_start_lines)
+	logFilePath1 = '%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, best_fit_mod)
+	print(logFilePath1)
+	if os.path.exists(logFilePath1):
+		with open(logFilePath1,'r') as file: 
+			# print("The following log file is open:",file)
+			# Reading through all the lines in the file.
+			lines = file.readlines()
+			# Creating an empty array to hold the start or inital values that we give xpsec to fit the model.
+			fit_start_lines =[]
+			# Initializing the list to store the parameters
+			params = []
+			# Initlizing the list to the store the errors. 
+			errors =[]
+			# This keep track of the number of iterations, thus telling us the number of lines. It basically counts the number of iterations. 
+			for i, line in enumerate(lines):
+				# print("This is the value is i: ",i)
+				# Finding the line where the data with the best fit starts.
+				if "#   1    1   powerlaw   PhoIndex" in line:
+					# Adding these values to the array called fit_start. fit_start holds the line numbers where the fitting parameters begin.
+					fit_start_lines.append(i)
+				# print("The fitting parameters begin at these line numbers in the log file:",fit_start_lines)
 
 		# Finding the line that the best fit parameters begin at in the log file.
 		start_best_fit_param_lines = fit_start_lines[-1]
-		print("This is the line that the best fit parameters being at: ",start_best_fit_param_lines)
+		# print("This is the line that the best fit parameters being at: ",start_best_fit_param_lines)
 
 		# num_lor refers to the key value of the best fit model in the dictionary that is made on line 28
 		num_lor = num_lor_dict[best_fit_mod]
@@ -135,37 +150,39 @@ for p in glob.glob(obsid):
 		# Additional 2 added at the end from the power law
 		num_param = ((int(best_fit_mod[0])+1) * 3) + 2
 		# Printing the best fit model and the number of parameters needed to fit the model
-		print("This is the key of the lorenztian model that is of best fit:", num_lor)
-		print("This is the number of parameters that are used to fit the best fit lorentzian model:",num_param)
+		# print("This is the key of the lorenztian model that is of best fit:", num_lor)
+		# print("This is the number of parameters that are used to fit the best fit lorentzian model:",num_param)
 
 		# Finding the last line of the best fit parameters.
 		end_best_fit_param_line = start_best_fit_param_lines + num_param
-		print("This is the last line number of the best fit parameters:",end_best_fit_param_line)
+		# print("This is the last line number of the best fit parameters:",end_best_fit_param_line)
 
 		for i in range(start_best_fit_param_lines, end_best_fit_param_line):
-			print("This is the value of i: ",i)
+			# print("This is the value of i: ",i)
 			params.append(lines[i].split()[-3])
 			errors.append(lines[i].split()[-1])
 			#print(lines[i].split()[-1])
+	else:
+		print("The file does not exist")
 
-	print("These are the fitting parameters: ")
-	print(params)
-	print("These are the errors:")
-	print(errors)
+	# print("These are the fitting parameters: ")
+	# print(params)
+	# print("These are the errors:")
+	# print(errors)
 
 	#### Look for QPOs
 	qpo = []
 	qpo_err = []
 	for i in range(len(params)):
 		#print(i+1, params[i])
-		print(i)
+		# print(i)
 		if (i+1) % 3 == 0 and i>=4: #ignoring first 2 params as they fit powerlaw and the next 3 as they fit the lor for bbn. 
 			Q = float(params[i])/float(params[i+1])
-			print("Q: ", Q) ##test delete later
+			# print("Q: ", Q) ##test delete later
 			if Q >= 2.0: #only look for peaked components
 				if float(params[i]) > 0.1 and float(params[i]) < 64.0:
-					print('QPO with Centroid frequency of', params[i])
-					print('Q value is', Q)
+					# print('QPO with Centroid frequency of', params[i])
+					# print('Q value is', Q)
 					qpo.append([ float(params[i]) , float(params[i+1]) , float(params[i+2]) ])
 					qpo_err.append([ float(errors[i]) , float(errors[i+1]) , float(errors[i+2]) ])
 
@@ -184,3 +201,4 @@ for p in glob.glob(obsid):
 		fileCreated.write("The best fit model is: " + best_fit_mod)
 		fileCreated.close()
 		print("You can find the best model in the best_model.txt file")
+		print("\n")
