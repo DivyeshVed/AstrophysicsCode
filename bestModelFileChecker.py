@@ -1,3 +1,6 @@
+# This file checks for the qpo_fit folder inside the obsid folder, and for the best_model.txt inside the qpo_fit folder.
+# It tells us the number of obsids that have the qpo_fit folder, and the ones that don't. 
+
 import sys
 import os 
 

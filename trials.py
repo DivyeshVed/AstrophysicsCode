@@ -1,5 +1,7 @@
-import glob
+import pickle
 
-path = '/Users/rohanpunamiya/Desktop/Data/P93071/93071-04-01-00/qpo_fit'
-for p in glob.glob('*.eps'):
-    print(p)
+data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/goodValues.pkl","rb"))
+print(data.to_string())
+
+data1 = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/okayValues.pkl","rb"))
+print(data1.to_string())

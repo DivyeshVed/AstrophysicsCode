@@ -1,15 +1,23 @@
-import numpy
+import numpy as np
 import re
 import glob
 from powerspec import *
 import sys
 import os
+import pickle
+import pandas as pd
 
 #### MAKE SURE TO RUN qpo_fit_code.py BEFORE RUNNING THIS CODE, OTHERWISE THERE WON'T BE ANY LOG FILES FOR THIS CODE TO READ!
 # Taking input from the user. This input is the prnb folder name. 
-prnb = sys.argv[1]
-# Getting the path of the data
-obsid = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s/*' %prnb
+prnbFolder = sys.argv[1]
+# Getting the path of the data. This is the path to the prnb folder. 
+prnbPath = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s' %prnbFolder
+# Maing a list of the obsid folders in the prnb folder. 
+obsidList = os.listdir(prnbPath)
+# Checking if the .DS_Store exists as an obsid folder. 
+if '.DS_Store' in obsidList:
+    # Deleting it if that item exists.
+    obsidList.remove('.DS_Store')
 # # Getting the second input from the user which is the obsid folder name
 # input2 = sys.argv[2]
 # Getting the obsid and attaching it to the path
@@ -27,24 +35,37 @@ models = ['0.5lor','1lor','1.5lor','2lor', '3lor', '4lor']
 # Making a dictionary with the names of the models and the indices that you want to store them in in the dictionary. The value on the left of the colon is the key, and the one to the right is the value.
 num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7}
 
-# Iterating through the empty list of pathnames that are similar to the obsid
-for p in glob.glob(obsid):
+# Loading our pandas data table.
+df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
+
+
+# Iterating through the obsidList, and running the code for every obsid in the list. 
+for num in range(0,len(obsidList)):
+	p = obsidList[num]
 	print("This is the obsid: " + p)
-	# Finding the path that has the qpo_fit folder and finding the ind_obs file in that folder. There is no ind_obs, thus not really sure how this line is going to work. 
-	qpo_fit_path = '%s/qpo_fit'%p
+	# Finding the path that has the qpo_fit folder. Making this using the prnbPath and the obsid from the list. 
+	qpo_fit_path = '%s/%s/qpo_fit'%(prnbPath,p)
+	print(qpo_fit_path)
+	# We want to keep track of the number of files in the qpo_fit folder so that we can tell whether there are enough eps files or not. 
+	# A counter to keep track of the number of files in the folder.
 	count = 0
 	# Checking for the qpo_fit folder in the obsid folder
 	qpo_fit_exists = os.path.exists(qpo_fit_path)
+	# If the qpo_fit folder exists, then you want to iterate through all the files and count the number of files. 
 	if qpo_fit_exists:
 		for path in os.listdir(qpo_fit_path):
 			count += 1
+		# Printing out the total number of files in the qpo_fit folder. 
 		print('File count:', count)
+		# If there is less than a threshold number of files, then you should ignore that obsid, as it does not have all the eps files. 
 		if count < 20:
 			print("This obsid does not have the eps files in its qpo_fit folder. Ignore this obsid")
+			# Moving to the next iteration of the loop, or the next file in the folder. 
 			continue
 		# Creating an empty dictionary. 
 		model_dict ={}
 	else:
+		# Print statement incase the qpo_fit folder does not exist for that obsid. 
 		print("The qpo_fit folder does not exist")
 		continue
 
@@ -58,25 +79,25 @@ for p in glob.glob(obsid):
 	# print("This is the frequency interval:",freq_int)
 	# Iterating through the list of models
 	for m in models:
+		# Making the path to the log file.
 		logFilePath = '%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, m)
+		# Checking if the file exists, and accessing it if it does exist. 
 		if os.path.exists(logFilePath):
 			# Opening the log files with the name as the models. 
 			with open(logFilePath, 'r') as file:
 				# Reading the lines in the log file. 
 				lines = file.readlines()
-
 				# Calculate reduced chi squared
 				x = [lines for lines in lines if "Null hypothesis" in lines]
 				dof = (float(x[-1].split(" ")[7]))
-
 				y = [lines for lines in lines if "Test statistic" in lines]
 				chi_sq = (float(y[-1].split(" ")[-8]))
-
 				red_chi_sq = numpy.round(chi_sq/dof , 2)
 				# This is adding the reduced chi squared value to the dictionary made above called model_dict. 
 				model_dict[m] = red_chi_sq
 				# print('Reduced Chi Squared for %s model is'%m, red_chi_sq)
 		else:
+			# Printing this statement if the log file does not exist. 
 			print("The file does not exist")
 			continue
 	# Printing the entire dictionary that contains all the key pair values for each model and their reduced chi squared value. 
@@ -120,7 +141,9 @@ for p in glob.glob(obsid):
 	# Opening the log file of the best fit model. 
 	logFilePath1 = '%s/%s_%i_%s_log.log'%(qpo_fit_path, f, seglength, best_fit_mod)
 	print(logFilePath1)
+	# Checking if the log file exists or not.
 	if os.path.exists(logFilePath1):
+		# Opening the log file.
 		with open(logFilePath1,'r') as file: 
 			# print("The following log file is open:",file)
 			# Reading through all the lines in the file.
@@ -186,19 +209,36 @@ for p in glob.glob(obsid):
 					qpo.append([ float(params[i]) , float(params[i+1]) , float(params[i+2]) ])
 					qpo_err.append([ float(errors[i]) , float(errors[i+1]) , float(errors[i+2]) ])
 
-	#### Calculate rms and significance of QPO
-	for i in range(len(qpo)):
-		area, area_err = (qpo_rms(freq1, qpo[i][0], qpo_err[i][0], qpo[i][1], qpo_err[i][1], qpo[i][2], qpo_err[i][2],freq_int))
-		print('RMS and error are', area, area_err)
-		signf = area / area_err
-		print('Significance is',signf)
+	print(qpo)
+	print("This is the length of the qpo array: " + str(len(qpo)))
+	print(qpo_err)
 
-		data = numpy.column_stack((numpy.round(qpo[i][0],3), numpy.round(qpo_err[i][0],3), numpy.round(qpo[i][0]/qpo[i][1],2),
-					numpy.round(area, 2), numpy.round(area_err, 2), numpy.round(signf, 3), numpy.round(best_chi, 2)))
-		numpy.savetxt('%s/qpo_%i.txt'%(qpo_fit_path,i),data,delimiter='\t',newline='\n',header='FREQ,FREQ_ERR,Q,RMS,RMS_ERR,SIG,RED_CHI_SQ')
-		##create file to save best fit model. You can then open this file and obtain data when logging QPO (in log QPO code)
-		fileCreated = open("%s/best_model.txt"%qpo_fit_path, "w")
-		fileCreated.write("The best fit model is: " + best_fit_mod)
-		fileCreated.close()
-		print("You can find the best model in the best_model.txt file")
-		print("\n")
+	if (len(qpo)) == 0:
+		signf = 'DNE'
+	else:
+		#### Calculate rms and significance of QPO
+		for i in range(len(qpo)):
+			area, area_err = (qpo_rms(freq1, qpo[i][0], qpo_err[i][0], qpo[i][1], qpo_err[i][1], qpo[i][2], qpo_err[i][2],freq_int))
+			print('RMS and error are', area, area_err)
+			signf = area / area_err
+			print('Significance is',signf)
+
+			data = numpy.column_stack((numpy.round(qpo[i][0],3), numpy.round(qpo_err[i][0],3), numpy.round(qpo[i][0]/qpo[i][1],2),
+						numpy.round(area, 2), numpy.round(area_err, 2), numpy.round(signf, 3), numpy.round(best_chi, 2)))
+			numpy.savetxt('%s/qpo_%i.txt'%(qpo_fit_path,i),data,delimiter='\t',newline='\n',header='FREQ,FREQ_ERR,Q,RMS,RMS_ERR,SIG,RED_CHI_SQ')
+			##create file to save best fit model. You can then open this file and obtain data when logging QPO (in log QPO code)
+			fileCreated = open("%s/best_model.txt"%qpo_fit_path, "w")
+			fileCreated.write("The best fit model is: " + best_fit_mod)
+			fileCreated.close()
+			print("You can find the best model in the best_model.txt file")
+			print("\n")
+	
+	if len(qpo) == 0:
+		qpoVals = ['DNE']
+	else:
+		qpoVals = qpo[0]
+
+	df2 = pd.DataFrame({'OBSID':p,'Q Value':qpoVals,'Significance':signf})
+	df = df.append(df2)
+
+df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
