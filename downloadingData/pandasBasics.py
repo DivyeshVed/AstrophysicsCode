@@ -1,5 +1,7 @@
 import pandas as pd
 
+# This file contains all the information about pandas that I learnt during the process of implementing pandas into the project. 
+
 #Loading data into a dataframe. This is used to read in a csv file.
 #df = pd.read_csv('pokemon_data.csv')
 #Loading the data into a dataframe from a txt file. Need to use the same function as reading a csv file, but need to specify a delimeter.

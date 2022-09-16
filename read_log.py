@@ -40,7 +40,7 @@ df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significanc
 
 
 # Iterating through the obsidList, and running the code for every obsid in the list. 
-for num in range(0,len(obsidList)):
+for num in range(len(obsidList)):
 	p = obsidList[num]
 	print("This is the obsid: " + p)
 	# Finding the path that has the qpo_fit folder. Making this using the prnbPath and the obsid from the list. 
@@ -68,7 +68,6 @@ for num in range(0,len(obsidList)):
 		# Print statement incase the qpo_fit folder does not exist for that obsid. 
 		print("The qpo_fit folder does not exist")
 		continue
-
 	# Creating a file that contains the power spectrum values normalized by fractional rms. 
 	ps_file = '%s/%s_fracrms_ps_%i.txt'%(qpo_fit_path,f,seglength)
 
@@ -215,7 +214,12 @@ for num in range(0,len(obsidList)):
 
 	if (len(qpo)) == 0:
 		signf = 'DNE'
-	else:
+		qpoVals = ['DNE']
+		area = 0
+	elif (len(qpo[0]) > 0):
+		qpoVals = qpo[0]
+		frequencyVal = qpo[0][0]
+		qVal = qpo[0][0]/qpo[0][1]
 		#### Calculate rms and significance of QPO
 		for i in range(len(qpo)):
 			area, area_err = (qpo_rms(freq1, qpo[i][0], qpo_err[i][0], qpo[i][1], qpo_err[i][1], qpo[i][2], qpo_err[i][2],freq_int))
@@ -232,13 +236,10 @@ for num in range(0,len(obsidList)):
 			fileCreated.close()
 			print("You can find the best model in the best_model.txt file")
 			print("\n")
-	
-	if len(qpo) == 0:
-		qpoVals = ['DNE']
-	else:
-		qpoVals = qpo[0]
 
-	df2 = pd.DataFrame({'OBSID':p,'Q Value':qpoVals,'Significance':signf})
+	dictionary = {'OBSID':p,'Frequency':qpoVals[0],'RMS Value': area,'Q Value':Q,'Significance':signf}
+	df2 = pd.DataFrame(dictionary,index=[1])
 	df = df.append(df2)
 
+print(df)
 df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")

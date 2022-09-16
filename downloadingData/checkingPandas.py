@@ -1,3 +1,5 @@
+# This file is used to check the pandas dataframe called newDataFrame. I think this was used in the trial and testing stages for pandasm when I was learning pandas. 
+
 import pandas as pd
 import pickle 
 
