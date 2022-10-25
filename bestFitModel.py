@@ -13,7 +13,7 @@ data1 = pickle.load(open("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTabl
 # Getting the column headers form the table. 
 columnHeader = data1.columns
 print(len(data1))
-
+counter = 0
 # Iterating through the data that is already present in the table. 
 for a in data1.index:
     obsid = data1.loc[a,"OBSID"]
@@ -36,12 +36,12 @@ for a in data1.index:
     for b in range(len(rcsList)):
         item = rcsList[b]
         print("This is the item we are focusing on: " + item)
-        if (float(item) <= 1.6 and float(item) >= 0.7):
+        if (float(item) <= 1.6 and float(item) >= 0.5):
             absValue = str(abs(float(item)-1.0))
             nonZeroListIndex.append(b)
             absValueList.append(absValue)
             print("Item was added to the absValueList and nonZeroListIndex")
-        elif (float(item) > 1.6 or float(item) < 0.7) or (item == 'nan'):
+        elif (float(item) > 1.6 or float(item) < 0.5) or (item == 'nan'):
             absValue = str(0)
             absValueList.append(absValue)
             print("Item was added to lists with a value of 0")
@@ -74,11 +74,12 @@ for a in data1.index:
         # Printing out the replace value constructed above. 
         print("This is the replace value: " + str(replaceValue))
         data1.loc[a,"Best_Fit_Model"] = replaceValue
+        counter = counter + 1
         print("The value has been replaced in the dataTable.pkl file")
     else:
         replaceValue = str('Nan')
         data1.loc[a,'Best_Fit_Model'] = replaceValue
     print("\n")
-    
+    print("This is the number of non-Nan values: " + str(counter))
 # Saving the dataTable to a pickle file.
 data1.to_pickle("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl") 

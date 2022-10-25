@@ -5,15 +5,7 @@
 
 import pandas as pd
 import pickle
-
-# # Creating the dataframe. Need to run this code firstt and then run the rest of the code. 
-# # Run this first, and then run postDownload.py.
-# # Making a list of all the names that we want as column headers for the table. 
-# column_names = ['OBSID', 'Frequency','RMS Value','Q Value', 'Significance']
-# # Creating the dataframe with the column headers.
-# df = pd.DataFrame(columns = column_names)
-# # Saving the dataframe that we just created.
-# df.to_pickle('/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl')
+import os
 
 # Opening the dataTable.pkl table. 
 # data = pickle.load(open("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl","rb"))
@@ -128,6 +120,18 @@ for a in data1.index:
 #         print("This obsid does not contain a qpo in the right rcs range: " + str(rcsValueInRange))
 #     print("\n")
 
-data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/goodValues.pkl","rb"))
+# data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/goodValues.pkl","rb"))
+# data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
+# print(data.to_string())
+# print("This is the number of observations that we have found to have good values: " + str(len(data)))
+
+data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
+# # data = data.reset_index()
+# data = data.drop('level_0',axis = 1)
 print(data.to_string())
-print("This is the number of observations that we have found to have good values: " + str(len(data)))
+data.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
+
+""" prnbPath = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2'
+obsidList = os.listdir(prnbPath)
+for a in range(len(obsidList)):
+    print(obsidList[a]) """

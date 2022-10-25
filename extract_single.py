@@ -19,32 +19,32 @@ from os.path import exists
 # def extract(path, propidList, propidPath): 
 # Taking input from the user. The first input is the prnb number
 prnbFolder = sys.argv[1]
+obsidFolder = sys.argv[2]
 # The propid refers to the proppsal ID that we want to run the code on. In this line, using the asterisk is using the widlcard, thus you can calling this code
 # on all the lines in the folder with the name of the proposal ID. 
 # propid = prnbFolder + '/*'
 #propid = sys.argv[1]
 #propid ='GX339-4/P70110/7*'
+prnbAndObsid = prnbFolder + '/' + obsidFolder
 # The path refers to the place where you can find the proposal ID folder. This path is attached to the propsal ID folder name, with it being at the end. 
-path = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s'%prnbFolder
-propidList = os.listdir(path)
-propidPath = path + '/*'
+path = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s'%prnbAndObsid
 
 # Returns the time taken to run the code. 
 start_time = time.time()
 # This refers to the file name that we are going to create in each of the proposal ID folders, as we are given the path above. 
-files = '%s/datamode.txt'%propidPath
+files = '%s/datamode.txt'%path
 # Output on the terminal indicating to the user than the code has began running.
 print('Creating list of datamode files..')
 # The subprocess module allows you to pawn new processes, connecting their inputs, outputs and many other things, but finally returning the output code. 
 # This line will run the commands given in the first arguement. In this case, it will go into the current folder (the one you run the code in AstrophysicsCode) and
 # it will look for a file with the bame list.sh, and then it will run the commands in this file. 
-subprocess.call(['./list.sh' , propidPath])
+subprocess.call(['./list.sh' ,path])
 # It will print this otuput to the terminal once the commands have run. 
 print('DONE!')
 
 ###Create list of filenames to be extracted
 # THe glob module finds all the pathnames matching a specified pattern. Return a list of empty path names that match pathname.
-for pathname in glob.glob(propidPath):
+for pathname in glob.glob(path):
 	# Pritning the pathname
 	print(pathname)
 	# Looking for the expression SB_ in the datamode file. If it does, then  assigning the modetype to 1

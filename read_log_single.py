@@ -10,14 +10,16 @@ import pandas as pd
 #### MAKE SURE TO RUN qpo_fit_code.py BEFORE RUNNING THIS CODE, OTHERWISE THERE WON'T BE ANY LOG FILES FOR THIS CODE TO READ!
 # Taking input from the user. This input is the prnb folder name. 
 prnbFolder = sys.argv[1]
+# Getting the particular obsid
+obsidFolder = sys.argv[2]
 # Getting the path of the data. This is the path to the prnb folder. 
 prnbPath = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/%s' %prnbFolder
 # Maing a list of the obsid folders in the prnb folder. 
-obsidList = os.listdir(prnbPath)
+# obsidList = os.listdir(prnbPath)
 # Checking if the .DS_Store exists as an obsid folder. 
-if '.DS_Store' in obsidList:
+# if '.DS_Store' in obsidList:
     # Deleting it if that item exists.
-    obsidList.remove('.DS_Store')
+    # obsidList.remove('.DS_Store')
 # # Getting the second input from the user which is the obsid folder name
 # input2 = sys.argv[2]
 # Getting the obsid and attaching it to the path
@@ -36,12 +38,12 @@ models = ['0.5lor','1lor','1.5lor','2lor', '3lor', '4lor']
 num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7}
 
 # Loading our pandas data table.
-df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
+df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/testValues.pkl","rb"))
 
 
 # Iterating through the obsidList, and running the code for every obsid in the list. 
-for num in range(len(obsidList)):
-	p = obsidList[num]
+for num in range(1):
+	p = obsidFolder
 	print("This is the obsid: " + p)
 	# Finding the path that has the qpo_fit folder. Making this using the prnbPath and the obsid from the list. 
 	qpo_fit_path = '%s/%s/qpo_fit'%(prnbPath,p)
@@ -202,7 +204,7 @@ for num in range(len(obsidList)):
 	for c in range(len(fittingParameters)):
 		#print(i+1, params[i])
 		# print(i)
-		if c >= 4 and (c+1)%3 == 0: #ignoring first 2 params as they fit powerlaw and the next 3 as they fit the lor for bbn. 
+		if c >=4: #ignoring first 2 params as they fit powerlaw and the next 3 as they fit the lor for bbn. 
 			# Q = float(fittingParameters[c])/float(fittingParameters[c+1])
 			# print("Q: ", Q) ##test delete later
 			# if Q >= 2.0: #only look for peaked components
@@ -288,14 +290,14 @@ for num in range(len(obsidList)):
 		FundFrequency = frequencyList[0][0]
 		FundFrequencyError = frequencyErrorList[0][0]
 		FundRCS = best_chi
-		FundQValue = QValueList[len(QValueList)-1]
+		FundQValue = QValueList[1]
 		FundRMS = areaList[0]
 		FundRMSError = areaErrList[0]
 		FundSignificance = signfList[0]
 		HarmonicFrequency = frequencyList[1][0]
 		HarmonicFrequencyError = frequencyErrorList[1][0]
 		HarmonicRCS = best_chi
-		HarmonicQValue = QValueList[len(QValueList)-2]
+		HarmonicQValue = QValueList[0]
 		HarmonicRMS = areaList[1]
 		HarmonicRMSError = areaErrList[1]
 		HarmonicSignificance = signfList[1]
@@ -365,4 +367,4 @@ for num in range(len(obsidList)):
 	df = df.append(df2)
 
 print(df.to_string())
-df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
+df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/testValues.pkl")

@@ -22,10 +22,10 @@ import sys
 ########
 
 # Initialing varibales. Defining the main path that leads the data folder in desktop.
-path = '/Users/rohanpunamiya/Desktop/Data/'
+path = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/'
 # Taking the input from the user. THis input is the prnb folder name. 
 input = sys.argv[1]
-# Craeting the final prnb path
+# Creating the final prnb path
 prnb = path + input
 # Getting the second input from the user which is the obsid folder name
 input2 = sys.argv[2]
@@ -321,27 +321,27 @@ for p in glob.glob(obsid):
 	print(model_dict)
 	os.chdir(path)
 
-# # Checking if the qpo_fit folder has been produced and updating pkl file
-# Loading the pkl file.
-data = pickle.load(open("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl","rb"))
-# Getting the names of all the obsids inside the prnb folder
-list_of_obsid = os.listdir(prnb)
-# Checking the list if there is a item with a particular name
-if '.DS_Store' in list_of_obsid:
-    # Deleting it if that item exists.
-    list_of_obsid.remove('.DS_Store')
-# Iterating through the list of obsids
-for item in list_of_obsid:
-	# Going into the obsid directory
-	os.chdir(prnb + "/" + item)
-	# Checking for the qpo_fit folder
-	qpo_fit__exists = exists('qpo_fit')
-	# If qpo_fit folder exists, then change the column under qpo_fit_code.py to yes
-	if qpo_fit__exists == True:
-		# Finding the index of the obsid in the dataframe
-		idx = int(data[data["OBSID"]== str(item)].index.values)
-		# Replacing the qpo_fit_code.py column to yes at the particular row index
-		data.loc[idx,'Ran qpo_fit_code.py'] = 'Yes'
-data.to_pickle("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl")
+# # # Checking if the qpo_fit folder has been produced and updating pkl file
+# # Loading the pkl file.
+# data = pickle.load(open("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl","rb"))
+# # Getting the names of all the obsids inside the prnb folder
+# list_of_obsid = os.listdir(prnb)
+# # Checking the list if there is a item with a particular name
+# if '.DS_Store' in list_of_obsid:
+#     # Deleting it if that item exists.
+#     list_of_obsid.remove('.DS_Store')
+# # Iterating through the list of obsids
+# for item in list_of_obsid:
+# 	# Going into the obsid directory
+# 	os.chdir(prnb + "/" + item)
+# 	# Checking for the qpo_fit folder
+# 	qpo_fit__exists = exists('qpo_fit')
+# 	# If qpo_fit folder exists, then change the column under qpo_fit_code.py to yes
+# 	if qpo_fit__exists == True:
+# 		# Finding the index of the obsid in the dataframe
+# 		idx = int(data[data["OBSID"]== str(item)].index.values)
+# 		# Replacing the qpo_fit_code.py column to yes at the particular row index
+# 		data.loc[idx,'Ran qpo_fit_code.py'] = 'Yes'
+# data.to_pickle("/Users/rohanpunamiya/Desktop/AstrophysicsCode/dataTable.pkl")
 
 ### Once this code is run, run read_log.py to extract the values of the qpo from the logs produced by XSPEC
