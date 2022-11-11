@@ -18,16 +18,19 @@ columnHeader = ['OBSID',
 'Harm.Sig']
 # Creating a dataframe that will hold all the rcs values that represent qpos.
 rcsValues = pd.DataFrame(columns = columnHeader)
-
+# Creating a counter variable
+counter = 0
 
 # Filtering the data based on fundamental values only
 for idx in data.index:
-    FundRCS = data['Fund.RCS'][idx]
-    if (FundRCS == 'DNE'):
+    FundQ = data['Fund.Q'][idx]
+    FundSig = data['Fund.Sig'][idx]
+    if ((FundSig == 'DNE') or (FundQ == 'DNE')):
         continue
     else: 
-        FundRCS = float(data['Fund.RCS'][idx])
-        if (FundRCS >= 0.7 and FundRCS <= 1.6):
+        FundSig = float(data['Fund.Sig'][idx])
+        FundQ = float(data['Fund.Q'][idx])
+        if ((FundSig >= 3.0) and (FundQ >= 2.0)):
             rcsValues.loc[idx,'OBSID'] = data['OBSID'][idx]
             rcsValues.loc[idx,'Best Fit Model'] = data['Best Fit Model'][idx]
             rcsValues.loc[idx,'Fund.Freq'] = data['Fund.Freq'][idx]
@@ -40,8 +43,10 @@ for idx in data.index:
             rcsValues.loc[idx,'Harm.RMS'] = data['Harm.RMS'][idx]
             rcsValues.loc[idx,'Harm.Q'] = data['Harm.Q'][idx]
             rcsValues.loc[idx,'Harm.Sig'] = data['Harm.Sig'][idx]
-
+            counter = counter + 1
+            
 print(rcsValues)
-rcsValues.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/rcsValues.pkl")
-rcsValues.to_excel("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/rcsValues.xlsx")
+print("There are %s obsids that fall within the correct Sig value range"%str(counter))
+rcsValues.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/sigQFilterValues.pkl")
+rcsValues.to_excel("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/sigQFilterValues.xlsx")
 data.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
