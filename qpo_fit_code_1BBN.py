@@ -84,7 +84,7 @@ for p in glob.glob(obsid):
 
 	# subprocess.call(['./run_flx2xsp.sh', infile, str(seglength), str(path)])
 
-	# Making a model theat usses one power law and two lorentzian.
+	# Making a model theat uses one power law and two lorentzian.
 	# One lorentzian for the Background Noise, one for the QPO. 
 	with open('xspec_1lor_fit.sh', 'w') as file:
 		file.write('data %s_%i_rb_ps.pha \n'%(f,seglength))
@@ -115,7 +115,7 @@ for p in glob.glob(obsid):
 		file.write('exit \n')
 		file.write('exit \n')
 
-# Making a model that uses one power law and two lorenztians.
+# Making a model that uses one power law and three lorenztians.
 # One lorenztian for the Background Noise, one for the subharmonic, and one for the QPO.
 	with open('xspec_0.5lor_fit.sh', 'w') as file:
 		file.write('data %s_%i_rb_ps.pha \n'%(f,seglength))

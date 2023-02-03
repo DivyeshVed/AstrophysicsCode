@@ -38,7 +38,7 @@ models = ['0.5lor','1lor','1.5lor','2lor', '3lor', '4lor']
 num_lor_dict = {'0.5lor':2, '1lor':3, '1.5lor':4 , '2lor':5 , '3lor':6, '4lor':7}
 
 # Loading our pandas data table.
-df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/testValues.pkl","rb"))
+df = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
 
 
 # Iterating through the obsidList, and running the code for every obsid in the list. 
@@ -60,7 +60,7 @@ for num in range(1):
 		# Printing out the total number of files in the qpo_fit folder. 
 		print('File count:', count)
 		# If there is less than a threshold number of files, then you should ignore that obsid, as it does not have all the eps files. 
-		if count < 20:
+		if count < 10:
 			print("This obsid does not have the eps files in its qpo_fit folder. Ignore this obsid")
 			# Moving to the next iteration of the loop, or the next file in the folder. 
 			continue
@@ -367,4 +367,4 @@ for num in range(1):
 	df = df.append(df2)
 
 print(df.to_string())
-df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/testValues.pkl")
+df.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")

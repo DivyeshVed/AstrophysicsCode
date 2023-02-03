@@ -47,7 +47,7 @@ import sys
 # data.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
 
 input = sys.argv[1]
-data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb")
+data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
 if input == "clear": 
     data.drop(data.index,inplace=True)
 elif input == 'sort':
@@ -55,5 +55,6 @@ elif input == 'sort':
 elif input == 'reset_index':
     data = data.reset_index()
     data = data.drop('index',axis = 1)
-print(data.to_string())
+elif input == 'print':
+    print(data.to_string())
 data.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")

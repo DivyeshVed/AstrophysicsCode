@@ -125,10 +125,11 @@ for a in data1.index:
 # print(data.to_string())
 # print("This is the number of observations that we have found to have good values: " + str(len(data)))
 
-data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl","rb"))
-# # data = data.reset_index()
-# data = data.drop('level_0',axis = 1)
-print(data.to_string())
+data = pickle.load(open("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/6sigma_QPO_list.pkl","rb"))
+list = data.loc[:,"OBSID"]
+obsid = list[0]
+prnb = obsid[0:5]
+print(prnb)
 data.to_pickle("/Users/rohanpunamiya/Dropbox (GaTech)/CygX2/Q_Significance_Values.pkl")
 
 """ prnbPath = '/Users/rohanpunamiya/Dropbox (GaTech)/CygX2'
